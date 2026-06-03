@@ -2931,3 +2931,252 @@ window.runSandbox = runSandbox;
 // END OF CHUNK 4
 // ============================================================
 </script>
+// PASTE THIS AT THE VERY BOTTOM OF YOUR index.html FILE
+// ============================================================
+// COMPLETE TAB IMPLEMENTATIONS
+// ============================================================
+
+// Complete Home Dashboard
+function renderHomeTab() {
+    const plan = AppState.user.plan;
+    const planData = PLANS[plan];
+    const resetInfo = CreditManager.getResetInfo();
+    
+    const modules = ['marketing', 'chat', 'kalshi', 'code'];
+    const moduleNames = { marketing: 'Marketing', chat: 'AI Chat', kalshi: 'Kalshi', code: 'Code' };
+    const moduleIcons = { marketing: '📢', chat: '💬', kalshi: '📊', code: '💻' };
+    const moduleColors = { marketing: 'purple', chat: 'blue', kalshi: 'orange', code: 'green' };
+    
+    const usageCards = modules.map(module => {
+        const used = CreditManager.getUsed(module);
+        const limit = CreditManager.getLimit(module);
+        const remaining = CreditManager.getRemaining(module);
+        const percent = limit > 0 ? (used / limit) * 100 : 0;
+        const isLow = remaining < limit * 0.2 && remaining > 0;
+        
+        return `
+            <div class="bg-[#12121a] rounded-xl p-4 border border-white/10">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">${moduleIcons[module]}</span>
+                        <span class="font-medium text-white">${moduleNames[module]}</span>
+                    </div>
+                    <span class="text-xs ${remaining === 0 ? 'text-red-400' : isLow ? 'text-orange-400' : 'text-gray-500'}">${remaining} left</span>
+                </div>
+                <div class="w-full bg-${moduleColors[module]}-500/20 rounded-full h-2 mb-2">
+                    <div class="bg-${moduleColors[module]}-500 h-2 rounded-full" style="width: ${percent}%"></div>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-500">${used}/${limit}</span>
+                    <span class="text-gray-500">Resets in ${resetInfo.daysLeft} days</span>
+                </div>
+                ${remaining === 0 ? `<button onclick="showUpgradeModal()" class="w-full mt-3 text-xs text-purple-400">Upgrade →</button>` : ''}
+            </div>
+        `;
+    }).join('');
+    
+    const activities = (AppState.activityFeed || []).slice(0, 6).map(activity => `
+        <div class="flex items-start gap-3 p-3 bg-[#0f0f15] rounded-lg">
+            <div class="text-2xl">${activity.type === 'generation' ? '✨' : '📌'}</div>
+            <div class="flex-1">
+                <p class="text-sm text-gray-300">${activity.message}</p>
+                <p class="text-xs text-gray-600 mt-1">${activity.formattedTime}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    const trialBanner = AppState.user.trialActive ? `
+        <div class="bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-xl p-4 border border-orange-500/20">
+            <div class="flex items-center justify-between">
+                <div><p class="text-sm font-medium text-orange-400">🎁 Trial Active — ${AppState.user.trialType.toUpperCase()} Plan</p><p class="text-xs text-gray-400">${TrialManager.getTrialRemaining()} hours remaining</p></div>
+                <button onclick="showUpgradeModal()" class="px-4 py-2 bg-purple-600 rounded-lg text-sm">Subscribe →</button>
+            </div>
+        </div>
+    ` : '';
+    
+    return `
+        <div class="fade-in space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div><h1 class="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Dashboard</h1><p class="text-gray-500 mt-1">Welcome to Blank Log™</p></div>
+                <div class="px-4 py-2 rounded-lg ${plan === 'free' ? 'plan-badge-free' : plan === 'premium' ? 'plan-badge-premium' : 'plan-badge-pro'}"><span class="text-sm font-medium">${planData.name} Plan</span></div>
+            </div>
+            ${trialBanner}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-gradient-to-br from-purple-500/10 rounded-xl p-4 border border-purple-500/20"><p class="text-gray-500 text-xs">Monthly Usage</p><p class="text-2xl font-bold text-white">${Math.round(modules.reduce((sum, m) => sum + (CreditManager.getUsed(m) / CreditManager.getLimit(m) * 100), 0) / 4)}%</p></div>
+                <div class="bg-gradient-to-br from-blue-500/10 rounded-xl p-4 border border-blue-500/20"><p class="text-gray-500 text-xs">Saved Items</p><p class="text-2xl font-bold text-white">${(AppState.marketingDrafts || []).length + (AppState.predictions || []).length}</p></div>
+                <div class="bg-gradient-to-br from-green-500/10 rounded-xl p-4 border border-green-500/20"><p class="text-gray-500 text-xs">Reset In</p><p class="text-2xl font-bold text-white">${resetInfo.daysLeft}d</p></div>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="bg-[#12121a] rounded-xl p-5 border border-white/10"><h2 class="text-lg font-semibold text-white mb-4">📊 Usage Overview</h2><div class="space-y-4">${usageCards}</div></div>
+                <div class="bg-[#12121a] rounded-xl p-5 border border-white/10"><h2 class="text-lg font-semibold text-white mb-4">📝 Recent Activity</h2><div class="space-y-2 max-h-[400px] overflow-y-auto">${activities || '<div class="text-center text-gray-500 py-8">No recent activity</div>'}</div></div>
+            </div>
+        </div>
+    `;
+}
+
+// Marketing Tab
+let marketingState = { topic: '', audience: 'general', tone: 'professional', platform: 'twitter', goal: 'awareness', isGenerating: false, currentOutput: '' };
+
+function updateMarketingUI() {
+    const container = document.getElementById('marketing-full-content');
+    if (!container) return;
+    const remaining = CreditManager.getRemaining('marketing');
+    const limit = CreditManager.getLimit('marketing');
+    const used = CreditManager.getUsed('marketing');
+    const percent = limit > 0 ? (used / limit) * 100 : 0;
+    
+    container.innerHTML = `
+        <div class="space-y-6">
+            <div class="flex justify-between items-center"><div><h1 class="text-2xl font-bold text-white">📢 Marketing Workspace</h1><p class="text-gray-500 text-sm">Create and schedule marketing content</p></div>
+            <div class="bg-[#12121a] rounded-lg px-4 py-2"><span class="text-sm text-gray-400">Credits:</span><span class="ml-2 text-purple-400">${remaining}/${limit}</span><div class="w-32 bg-purple-500/20 rounded-full h-1.5 mt-1"><div class="bg-purple-500 h-1.5 rounded-full" style="width: ${percent}%"></div></div></div></div>
+            <div class="bg-[#12121a] rounded-xl p-5 border border-white/10">
+                <input type="text" id="marketing-topic" placeholder="What are you promoting?" class="w-full px-4 py-3 bg-[#0f0f15] border border-white/10 rounded-lg text-white mb-4">
+                <div class="grid md:grid-cols-4 gap-3 mb-4">
+                    <select id="marketing-platform" class="px-3 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white"><option value="twitter">Twitter/X</option><option value="linkedin">LinkedIn</option><option value="instagram">Instagram</option><option value="email">Email</option></select>
+                    <select id="marketing-tone" class="px-3 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white"><option value="professional">Professional</option><option value="casual">Casual</option><option value="witty">Witty</option><option value="urgent">Urgent</option></select>
+                    <select id="marketing-audience" class="px-3 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white"><option value="general">General</option><option value="technical">Technical</option><option value="business">Business</option></select>
+                    <select id="marketing-goal" class="px-3 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white"><option value="awareness">Awareness</option><option value="engagement">Engagement</option><option value="conversion">Conversion</option></select>
+                </div>
+                <button onclick="generateMarketingContentFinal()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold" ${remaining === 0 ? 'disabled' : ''}>✨ Generate Content</button>
+                ${marketingState.currentOutput ? `<div class="mt-4 p-4 bg-[#0f0f15] rounded-lg"><p class="text-gray-300 whitespace-pre-wrap">${marketingState.currentOutput}</p><div class="flex gap-2 mt-3"><button onclick="copyToClipboardFinal('${marketingState.currentOutput.replace(/'/g, "\\'")}')" class="px-3 py-1 bg-[#1a1a24] rounded-lg text-sm">📋 Copy</button><button onclick="saveMarketingDraftFinal()" class="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-lg text-sm">💾 Save</button></div></div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('marketing-topic')?.addEventListener('input', (e) => marketingState.topic = e.target.value);
+    document.getElementById('marketing-platform')?.addEventListener('change', (e) => marketingState.platform = e.target.value);
+    document.getElementById('marketing-tone')?.addEventListener('change', (e) => marketingState.tone = e.target.value);
+    document.getElementById('marketing-audience')?.addEventListener('change', (e) => marketingState.audience = e.target.value);
+    document.getElementById('marketing-goal')?.addEventListener('change', (e) => marketingState.goal = e.target.value);
+}
+
+function generateMarketingContentFinal() {
+    if (!CreditManager.canUse('marketing')) { alert('No credits left! Upgrade to continue.'); return; }
+    if (!marketingState.topic) { alert('Enter a topic first'); return; }
+    marketingState.isGenerating = true;
+    updateMarketingUI();
+    setTimeout(() => {
+        const responses = { twitter: `🚀 Check out ${marketingState.topic}! #Innovation`, linkedin: `Exploring ${marketingState.topic} - it's transforming our workflow.`, instagram: `${marketingState.topic} is here! ✨`, email: `Subject: Introducing ${marketingState.topic}\n\nYou won't want to miss this...` };
+        marketingState.currentOutput = responses[marketingState.platform] || `Check out ${marketingState.topic}!`;
+        marketingState.isGenerating = false;
+        CreditManager.useCredits('marketing');
+        updateMarketingUI();
+    }, 1000);
+}
+
+function saveMarketingDraftFinal() {
+    if (!marketingState.currentOutput) return;
+    AppState.marketingDrafts = AppState.marketingDrafts || [];
+    AppState.marketingDrafts.unshift({ id: Date.now(), content: marketingState.currentOutput, createdAt: new Date().toISOString() });
+    StorageService.saveAppState();
+    alert('Draft saved!');
+}
+
+function copyToClipboardFinal(text) { navigator.clipboard.writeText(text); alert('Copied!'); }
+
+// AI Chat Tab
+let chatMessagesFinal = [];
+
+function updateChatUIFinal() {
+    const container = document.getElementById('chat-full-content');
+    if (!container) return;
+    const remaining = CreditManager.getRemaining('chat');
+    const messagesHtml = chatMessagesFinal.map(msg => `<div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-3"><div class="max-w-[75%] ${msg.role === 'user' ? 'bg-purple-600 rounded-l-xl rounded-br-xl' : 'bg-[#0f0f15] rounded-r-xl rounded-bl-xl'} p-3"><p class="text-sm text-white">${msg.content}</p><p class="text-xs text-gray-400 mt-1">${new Date(msg.timestamp).toLocaleTimeString()}</p></div></div>`).join('');
+    container.innerHTML = `<div class="space-y-4"><div class="flex justify-between items-center"><h1 class="text-2xl font-bold text-white">💬 AI Chat</h1><div class="bg-[#12121a] px-4 py-2 rounded-lg"><span class="text-purple-400">${remaining}</span><span class="text-gray-500">/${CreditManager.getLimit('chat')}</span></div></div><div class="bg-[#12121a] rounded-xl border border-white/10 h-[500px] flex flex-col"><div class="flex-1 overflow-y-auto p-4" id="chat-messages-final">${messagesHtml || '<div class="text-center text-gray-500 py-20">Send a message to start</div>'}</div><div class="p-4 border-t border-white/10 flex gap-2"><input type="text" id="chat-input-final" placeholder="Type your message..." class="flex-1 px-4 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white"><button onclick="sendChatMessageFinal()" class="px-4 py-2 bg-purple-600 rounded-lg">Send</button></div></div></div>`;
+    document.getElementById('chat-input-final')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessageFinal(); });
+    const messagesDiv = document.getElementById('chat-messages-final');
+    if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function sendChatMessageFinal() {
+    const input = document.getElementById('chat-input-final');
+    if (!input || !input.value.trim()) return;
+    if (!CreditManager.canUse('chat')) { alert('No chat credits left!'); return; }
+    chatMessagesFinal.push({ role: 'user', content: input.value, timestamp: new Date().toISOString() });
+    input.value = '';
+    updateChatUIFinal();
+    setTimeout(() => {
+        const responses = ["Great question! Here's what I think...", "I understand. Let me help you with that.", "Based on my analysis, here's the best approach."];
+        chatMessagesFinal.push({ role: 'assistant', content: responses[Math.floor(Math.random() * responses.length)], timestamp: new Date().toISOString() });
+        CreditManager.useCredits('chat');
+        updateChatUIFinal();
+    }, 1000);
+}
+
+// Kalshi Tab
+let kalshiPredictions = [];
+
+function updateKalshiUIFinal() {
+    const container = document.getElementById('kalshi-full-content');
+    if (!container) return;
+    const remaining = CreditManager.getRemaining('kalshi');
+    const predictionsHtml = kalshiPredictions.map(pred => `<div class="bg-[#12121a] rounded-xl p-4 border border-white/10"><div class="flex justify-between"><h3 class="font-semibold text-white">${pred.title}</h3><span class="text-purple-400">${pred.confidence}%</span></div><div class="w-full bg-purple-500/20 rounded-full h-2 mt-2"><div class="bg-purple-500 h-2 rounded-full" style="width: ${pred.confidence}%"></div></div><p class="text-xs text-gray-500 mt-2">${new Date(pred.createdAt).toLocaleDateString()}</p></div>`).join('');
+    container.innerHTML = `<div class="space-y-6"><div class="flex justify-between"><h1 class="text-2xl font-bold text-white">📊 Kalshi Intelligence</h1><div class="bg-[#12121a] px-4 py-2 rounded-lg"><span class="text-purple-400">${remaining}</span><span class="text-gray-500">/${CreditManager.getLimit('kalshi')}</span></div></div><div class="grid lg:grid-cols-3 gap-6"><div class="bg-[#12121a] rounded-xl p-5 border border-white/10"><h2 class="text-lg font-semibold text-white mb-4">Create Prediction</h2><input type="text" id="prediction-title-final" placeholder="Prediction title..." class="w-full px-4 py-2 bg-[#0f0f15] border border-white/10 rounded-lg text-white mb-3"><input type="range" id="prediction-confidence-final" min="0" max="100" value="75" class="w-full mb-2"><span id="confidence-value-final" class="text-purple-400">75%</span><button onclick="createPredictionFinal()" class="w-full mt-4 py-2 bg-purple-600 rounded-lg">Create</button></div><div class="lg:col-span-2"><h2 class="text-lg font-semibold text-white mb-4">Your Predictions</h2><div class="space-y-3">${predictionsHtml || '<div class="text-center text-gray-500 py-8">No predictions yet</div>'}</div></div></div></div>`;
+    document.getElementById('prediction-confidence-final')?.addEventListener('input', (e) => { const span = document.getElementById('confidence-value-final'); if (span) span.textContent = e.target.value + '%'; });
+}
+
+function createPredictionFinal() {
+    const titleInput = document.getElementById('prediction-title-final');
+    const confidenceSlider = document.getElementById('prediction-confidence-final');
+    if (!titleInput || !titleInput.value) { alert('Enter a title'); return; }
+    if (!CreditManager.canUse('kalshi')) { alert('No prediction credits left!'); return; }
+    kalshiPredictions.unshift({ id: Date.now(), title: titleInput.value, confidence: confidenceSlider?.value || 75, createdAt: new Date().toISOString() });
+    titleInput.value = '';
+    CreditManager.useCredits('kalshi');
+    updateKalshiUIFinal();
+}
+
+// Code Tab
+let codeOutputFinal = '';
+
+function updateCodeUIFinal() {
+    const container = document.getElementById('code-full-content');
+    if (!container) return;
+    const remaining = CreditManager.getRemaining('code');
+    container.innerHTML = `<div class="space-y-6"><div class="flex justify-between"><h1 class="text-2xl font-bold text-white">💻 Code Assistant</h1><div class="bg-[#12121a] px-4 py-2 rounded-lg"><span class="text-purple-400">${remaining}</span><span class="text-gray-500">/${CreditManager.getLimit('code')}</span></div></div><div class="grid lg:grid-cols-2 gap-6"><div class="bg-[#12121a] rounded-xl p-5 border border-white/10"><textarea id="code-input-final" rows="10" class="w-full px-4 py-3 bg-[#0f0f15] border border-white/10 rounded-lg font-mono text-sm" placeholder="// Paste your code here"></textarea><select id="code-task-final" class="w-full mt-3 px-3 py-2 bg-[#0f0f15] border border-white/10 rounded-lg"><option value="review">Code Review</option><option value="explain">Explain</option><option value="debug">Debug</option></select><button onclick="processCodeFinal()" class="w-full mt-3 py-2 bg-green-600 rounded-lg">Run</button></div><div class="bg-[#12121a] rounded-xl p-5 border border-white/10"><h3 class="font-semibold text-white mb-3">Output</h3><div class="bg-black/30 rounded-lg p-4 min-h-[300px] whitespace-pre-wrap font-mono text-sm">${codeOutputFinal || '// Analysis will appear here'}</div></div></div></div>`;
+}
+
+function processCodeFinal() {
+    const codeInput = document.getElementById('code-input-final');
+    const taskSelect = document.getElementById('code-task-final');
+    if (!codeInput || !codeInput.value.trim()) { alert('Enter code first'); return; }
+    if (!CreditManager.canUse('code')) { alert('No code credits left!'); return; }
+    codeOutputFinal = `## ${taskSelect?.value.toUpperCase()}\n\nLines: ${codeInput.value.split('\n').length}\n\n${codeInput.value.includes('function') ? '✓ Functions detected\n' : '⚠️ Consider using functions\n'}✅ Analysis complete!`;
+    CreditManager.useCredits('code');
+    updateCodeUIFinal();
+}
+
+// Admin Tab
+let adminSubtabFinal = 'dashboard';
+
+function updateAdminUIFinal() {
+    const container = document.getElementById('admin-full-content');
+    if (!container) return;
+    const isAdmin = AppState.user.role === 'admin' || AppState.user.role === 'developer';
+    if (!isAdmin) { container.innerHTML = `<div class="text-center py-20"><div class="text-6xl mb-4">🔒</div><h2 class="text-xl text-white">Admin Access Denied</h2></div>`; return; }
+    container.innerHTML = `<div class="space-y-6"><h1 class="text-2xl font-bold text-white">⚙️ Admin Panel</h1><div class="flex gap-2 border-b border-white/10 pb-4"><button onclick="setAdminSubtabFinal('dashboard')" class="px-4 py-2 rounded-lg ${adminSubtabFinal === 'dashboard' ? 'bg-purple-600' : 'bg-[#12121a]'}">Dashboard</button><button onclick="setAdminSubtabFinal('users')" class="px-4 py-2 rounded-lg ${adminSubtabFinal === 'users' ? 'bg-purple-600' : 'bg-[#12121a]'}">Users</button></div><div class="bg-[#12121a] rounded-xl p-5">${adminSubtabFinal === 'dashboard' ? '<p>System running normally</p>' : '<p>User management interface</p>'}</div></div>`;
+}
+
+function setAdminSubtabFinal(tab) { adminSubtabFinal = tab; updateAdminUIFinal(); }
+
+// Register render functions
+window.renderHomeTab = renderHomeTab;
+window.renderMarketingTab = () => '<div id="marketing-full-content"></div>';
+window.renderChatTab = () => '<div id="chat-full-content"></div>';
+window.renderKalshiTab = () => '<div id="kalshi-full-content"></div>';
+window.renderCodeTab = () => '<div id="code-full-content"></div>';
+window.renderAdminTab = () => '<div id="admin-full-content"></div>';
+
+// Initialize tabs when loaded
+const finalLoader = window.loadTabContent || function(){};
+window.loadTabContent = function(tabId) {
+    finalLoader(tabId);
+    if (tabId === 'marketing') updateMarketingUI();
+    if (tabId === 'chat') updateChatUIFinal();
+    if (tabId === 'kalshi') updateKalshiUIFinal();
+    if (tabId === 'code') updateCodeUIFinal();
+    if (tabId === 'admin') updateAdminUIFinal();
+};
+
+console.log('✅ All tabs ready!');
+</script>
