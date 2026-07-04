@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Blank Log™ — Premium AI Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .glass {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card {
+            background: #111111;
+            border: 1px solid #222222;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: #444444;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #dddddd;
+            transform: scale(1.02);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid #333333;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input,
+        select,
+        textarea {
+            background: #0a0a0a;
+            border: 1px solid #222222;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #ffffff;
+            width: 100%;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: #444444;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #ffffff;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .badge-free {
+            background: rgba(255, 255, 255, 0.08);
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .badge-premium {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .badge-pro {
+            background: #ffffff;
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .mobile-nav {
+                display: flex;
+            }
+            .main-content {
+                padding-bottom: 80px;
+            }
+        }
+        @media (min-width: 769px) {
+            .sidebar {
+                display: flex;
+            }
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            background: #111111;
+            border-right: 1px solid #222222;
+            flex-direction: column;
+            z-index: 40;
+            overflow-y: auto;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #111111;
+            border-top: 1px solid #222222;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px;
+            z-index: 50;
+        }
+
+        .mobile-nav button {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            padding: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .mobile-nav button.active {
+            color: #ffffff;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            padding: 24px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .plan-card {
+            border: 2px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .plan-card:hover {
+            border-color: #555;
+        }
+        .plan-card.popular {
+            border-color: #ffffff;
+        }
+
+        .plan-card .price {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .plan-card .price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: #555;
+            font-size: 13px;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 40px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: #888;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // ============================================================
+        // BLANK LOG — COMPLETE FRONTEND
+        // ============================================================
+
+        // ============================================================
+        // PLANS
+        // ============================================================
+        const PLANS = {
+            free: {
+                id: 'free',
+                name: 'Free',
+                price: 0,
+                priceDisplay: '$0',
+                priceLabel: 'Free',
+                limits: {
+                    autoPost: 5,
+                    chat: 20,
+                    kalshi: 3,
+                    code: 15
+                },
+                badge: 'Free'
+            },
+            premium: {
+                id: 'premium',
+                name: 'Premium',
+                price: 10,
+                priceDisplay: '$10',
+                priceLabel: '$10 / month',
+                limits: {
+                    autoPost: 25,
+                    chat: 100,
+                    kalshi: 15,
+                    code: 75
+                },
+                badge: 'Popular'
+            },
+            pro: {
+                id: 'pro',
+                name: 'Pro',
+                price: 25,
+                priceDisplay: '$25',
+                priceLabel: '$25 / month',
+                limits: {
+                    autoPost: Infinity,
+                    chat: Infinity,
+                    kalshi: Infinity,
+                    code: Infinity
+                },
+                badge: 'Best Value',
+                unlimited: true
+            }
+        };
+
+        // ============================================================
+        // APP STATE
+        // ============================================================
+        let AppState = {
+            isAuthenticated: true,
+            currentUser: {
+                name: 'Demo User',
+                email: 'demo@blanklog.com',
+                plan: 'free',
+                role: 'user'
+            },
+            activeTab: 'home',
+            usage: {
+                autoPost: { used: 3, limit: 5 },
+                chat: { used: 12, limit: 20 },
+                kalshi: { used: 1, limit: 3 },
+                code: { used: 8, limit: 15 }
+            },
+            scheduledPosts: [
+                { id: 1, title: 'Product Launch Post', platform: 'Twitter', scheduledTime: '2026-07-10T14:00', status: 'scheduled' },
+                { id: 2, title: 'Weekly Update', platform: 'LinkedIn', scheduledTime: '2026-07-12T09:00', status: 'scheduled' }
+            ],
+            chatMessages: [
+                { id: 1, role: 'user', content: 'What is Blank Log?', timestamp: '2026-07-04T10:00' },
+                { id: 2, role: 'assistant', content: 'Blank Log is a premium AI SaaS platform that combines social media automation, AI chat, code assistance, and prediction market tools in one dashboard.', timestamp: '2026-07-04T10:01' }
+            ],
+            predictions: [
+                { id: 1, title: 'Bitcoin will reach 75,000', confidence: 78, date: '2026-06-28' },
+                { id: 2, title: 'Apple will announce AI partnership', confidence: 65, date: '2026-07-01' }
+            ],
+            codeHistory: [
+                { id: 1, task: 'JavaScript Review', date: '2026-07-02' },
+                { id: 2, task: 'Python Debug', date: '2026-07-03' }
+            ]
+        };
+
+        // ============================================================
+        // STORAGE
+        // ============================================================
+        function saveState() {
+            try {
+                localStorage.setItem('blanklog_state', JSON.stringify({
+                    usage: AppState.usage,
+                    scheduledPosts: AppState.scheduledPosts,
+                    chatMessages: AppState.chatMessages,
+                    predictions: AppState.predictions,
+                    codeHistory: AppState.codeHistory
+                }));
+            } catch (e) {}
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('blanklog_state');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    AppState.usage = data.usage || AppState.usage;
+                    AppState.scheduledPosts = data.scheduledPosts || AppState.scheduledPosts;
+                    AppState.chatMessages = data.chatMessages || AppState.chatMessages;
+                    AppState.predictions = data.predictions || AppState.predictions;
+                    AppState.codeHistory = data.codeHistory || AppState.codeHistory;
+                }
+            } catch (e) {}
+        }
+
+        loadState();
+
+        // ============================================================
+        // USAGE HELPERS
+        // ============================================================
+        function getRemaining(module) {
+            const limit = AppState.usage[module].limit;
+            const used = AppState.usage[module].used;
+            return Math.max(0, limit - used);
+        }
+
+        function getPercent(module) {
+            const limit = AppState.usage[module].limit;
+            const used = AppState.usage[module].used;
+            if (limit === Infinity) return 0;
+            if (limit === 0) return 0;
+            return (used / limit) * 100;
+        }
+
+        function getLimitDisplay(module) {
+            const limit = AppState.usage[module].limit;
+            if (limit === Infinity) return 'Unlimited';
+            return limit;
+        }
+
+        function isUnlimited(module) {
+            return AppState.usage[module].limit === Infinity;
+        }
+
+        function getPlanName() {
+            return AppState.currentUser.plan.charAt(0).toUpperCase() + AppState.currentUser.plan.slice(1);
+        }
+
+        function getPlanBadge() {
+            const plan = AppState.currentUser.plan;
+            if (plan === 'free') return 'badge-free';
+            if (plan === 'premium') return 'badge-premium';
+            return 'badge-pro';
+        }
+
+        function canUseFeature(module, amount = 1) {
+            const remaining = getRemaining(module);
+            return remaining >= amount;
+        }
+
+        function useFeature(module, amount = 1) {
+            if (!canUseFeature(module, amount)) return false;
+            if (isUnlimited(module)) return true;
+            AppState.usage[module].used += amount;
+            saveState();
+            return true;
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        const tabs = [
+            { id: 'home', label: 'Home' },
+            { id: 'autopost', label: 'Auto Post' },
+            { id: 'chat', label: 'AI Chat' },
+            { id: 'kalshi', label: 'Kalshi' },
+            { id: 'code', label: 'Code' }
+        ];
+
+        if (AppState.currentUser.role === 'admin' || AppState.currentUser.role === 'developer') {
+            tabs.push({ id: 'admin', label: 'Admin' });
+        }
+
+        function setActiveTab(tabId) {
+            AppState.activeTab = tabId;
+            renderApp();
+        }
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        function renderSidebar() {
+            const plan = AppState.currentUser.plan;
+            const planData = PLANS[plan];
+
+            return `
+                <div class="sidebar">
+                    <div class="p-6 border-b border-[#222]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
+                                <span class="text-xl font-black">◼</span>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold text-white">Blank Log</h1>
+                                <p class="text-xs text-gray-500">v3.0.0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                        ${tabs.map(tab => `
+                            <button onclick="setActiveTab('${tab.id}')" 
+                                class="nav-link ${AppState.activeTab === tab.id ? 'active' : ''}">
+                                ${tab.label}
+                            </button>
+                        `).join('')}
+                    </nav>
+
+                    <div class="p-4 border-t border-[#222] space-y-3">
+                        <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-white">${planData.name} Plan</span>
+                                <span class="${getPlanBadge()} text-xs">${planData.badge}</span>
+                            </div>
+                            <div class="text-2xl font-bold text-white">${planData.priceLabel}</div>
+
+                            <div class="mt-3">
+                                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>Used this month</span>
+                                    <span>${AppState.usage.autoPost.used}/${getLimitDisplay('autoPost')}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min(100, getPercent('autoPost'))}%"></div>
+                                </div>
+                            </div>
+
+                            ${plan === 'free' ? `
+                                <button onclick="showPlansModal()" class="w-full mt-3 btn-primary text-sm py-2">Upgrade</button>
+                            ` : plan === 'premium' ? `
+                                <button onclick="showPlansModal()" class="w-full mt-3 btn-secondary text-sm py-2">Upgrade to Pro</button>
+                            ` : `
+                                <div class="w-full mt-3 text-center text-xs text-gray-500">Unlimited access</div>
+                            `}
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                            <span>System Online</span>
+                            <span class="flex-1 text-right">${AppState.currentUser.name}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <span>${AppState.currentUser.email}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // MOBILE NAV
+        // ============================================================
+        function renderMobileNav() {
+            return `
+                <div class="mobile-nav">
+                    ${tabs.map(tab => `
+                        <button onclick="setActiveTab('${tab.id}')" 
+                            class="${AppState.activeTab === tab.id ? 'active' : ''}">
+                            ${tab.label}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // FOOTER
+        // ============================================================
+        function renderFooter() {
+            return `
+                <div class="footer">
+                    <p>© 2026 Blank Log &bull; blanklogapp@gmail.com &bull; All rights reserved.</p>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // HOME TAB
+        // ============================================================
+        function renderHomeTab() {
+            const plan = AppState.currentUser.plan;
+            const planData = PLANS[plan];
+
+            const modules = [
+                { id: 'autoPost', label: 'AutoPost' },
+                { id: 'chat', label: 'AI Chat' },
+                { id: 'kalshi', label: 'Kalshi' },
+                { id: 'code', label: 'Code' }
+            ];
+
+            const usageCards = modules.map(m => {
+                const remaining = getRemaining(m.id);
+                const percent = getPercent(m.id);
+                const limit = getLimitDisplay(m.id);
+                const used = AppState.usage[m.id].used;
+                const unlimited = isUnlimited(m.id);
+
+                return `
+                    <div class="card p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-medium text-white">${m.label}</span>
+                            <span class="text-xs ${remaining === 0 && !unlimited ? 'text-red-400' : 'text-gray-500'}">
+                                ${unlimited ? 'Unlimited' : remaining} left
+                            </span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${unlimited ? 0 : Math.min(100, percent)}%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>${unlimited ? 'Unlimited' : used + ' / ' + limit}</span>
+                            ${remaining === 0 && !unlimited ? '<span class="text-red-400">Upgrade for more</span>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const recentPosts = AppState.scheduledPosts.slice(0, 3).map(post => `
+                <div class="flex justify-between items-center p-2 bg-[#0a0a0a] rounded-lg">
+                    <div>
+                        <p class="text-sm text-white">${post.title}</p>
+                        <p class="text-xs text-gray-500">${post.platform} • ${new Date(post.scheduledTime).toLocaleString()}</p>
+                    </div>
+                    <span class="badge-free text-xs">Scheduled</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="p-6 fade-in">
+                    <div class="mb-6">
+                        <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+                        <p class="text-gray-500 mt-1">Welcome back, ${AppState.currentUser.name}</p>
+                        <div class="mt-2">
+                            <span class="${getPlanBadge()}">${planData.name} Plan</span>
+                            ${plan === 'free' ? '<span class="text-xs text-gray-500 ml-2">— Upgrade to unlock more</span>' : ''}
+                            ${plan === 'premium' ? '<span class="text-xs text-gray-500 ml-2">— 5x more than Free</span>' : ''}
+                            ${plan === 'pro' ? '<span class="text-xs text-gray-500 ml-2">— Unlimited access</span>' : ''}
+                        </div>
+                    </div>
+
+                    <div class="grid-4 mb-6">
+                        ${usageCards}
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">Quick Actions</h3>
+                            <div class="grid-2 gap-2">
+                                <button onclick="setActiveTab('autopost')" class="btn-secondary text-sm py-3">New Post</button>
+                                <button onclick="setActiveTab('chat')" class="btn-secondary text-sm py-3">Chat</button>
+                                <button onclick="setActiveTab('kalshi')" class="btn-secondary text-sm py-3">Predict</button>
+                                <button onclick="setActiveTab('code')" class="btn-secondary text-sm py-3">Code</button>
+                            </div>
+                        </div>
+
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">Upcoming Posts</h3>
+                            <div class="space-y-2">
+                                ${recentPosts || '<div class="text-center text-gray-500 py-8">No scheduled posts</div>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // AUTOPOST TAB
+        // ============================================================
+        let autopostPlatform = 'TikTok';
+        const platforms = ['TikTok', 'YouTube', 'Instagram'];
+
+        function renderAutoPostTab() {
+            const remaining = getRemaining('autoPost');
+            const unlimited = isUnlimited('autoPost');
+            const canPost = unlimited || remaining > 0;
+
+            const postsHtml = AppState.scheduledPosts.map(post => `
+                <div class="flex justify-between items-center p-3 bg-[#0a0a0a] rounded-lg">
+                    <div>
+                        <p class="text-sm text-white">${post.title}</p>
+                        <p class="text-xs text-gray-500">${post.platform} • ${new Date(post.scheduledTime).toLocaleString()}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="badge-free text-xs">Scheduled</span>
+                        <button onclick="cancelPost(${post.id})" class="text-xs text-red-400">Cancel</button>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="p-6 fade-in">
+                    <h1 class="text-3xl font-bold text-white mb-2">Auto Post</h1>
+                    <p class="text-gray-500 mb-6">Schedule posts to TikTok, YouTube, and Instagram</p>
+
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex-1">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Monthly credits</span>
+                                <span>${unlimited ? 'Unlimited' : remaining + ' remaining'}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${unlimited ? 0 : Math.min(100, getPercent('autoPost'))}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-semibold text-white mb-4">Create Post</h3>
+
+                        <div class="grid-3 gap-3 mb-4">
+                            ${platforms.map(p => `
+                                <button onclick="setAutopostPlatform('${p}')" 
+                                    class="py-2 rounded-lg transition-all ${autopostPlatform === p ? 'btn-primary' : 'btn-secondary'}">
+                                    ${p}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <input type="text" id="postTitle" placeholder="Post title / caption" class="mb-3">
+                        <input type="datetime-local" id="postTime" class="mb-4">
+
+                        <button onclick="schedulePost()" 
+                            class="w-full btn-primary py-3 ${!canPost ? 'opacity-50 cursor-not-allowed' : ''}"
+                            ${!canPost ? 'disabled' : ''}>
+                            ${canPost ? 'Schedule Post' : 'No Credits Remaining'}
+                        </button>
+
+                        ${!canPost && !unlimited ? `
+                            <div class="mt-3 text-center">
+                                <button onclick="showPlansModal()" class="text-sm text-white underline">Upgrade for more credits</button>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-semibold text-white mb-4">Scheduled Posts</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            ${postsHtml || '<div class="text-center text-gray-500 py-8">No scheduled posts</div>'}
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // CHAT TAB
+        // ============================================================
+        function renderChatTab() {
+            const remaining = getRemaining('chat');
+            const unlimited = isUnlimited('chat');
+
+            const messagesHtml = AppState.chatMessages.map(msg => `
+                <div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-4">
+                    <div class="max-w-[75%] ${msg.role === 'user' ? 'bg-white text-black' : 'bg-[#1a1a1a]'} rounded-lg p-3">
+                        <p class="text-sm">${msg.content}</p>
+                        <p class="text-xs text-gray-500 mt-1">${new Date(msg.timestamp).toLocaleTimeString()}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="p-6 fade-in max-w-4xl mx-auto">
+                    <h1 class="text-3xl font-bold text-white mb-2">AI Chat</h1>
+                    <p class="text-gray-500 mb-6">Ask me anything</p>
+
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex-1">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Monthly messages</span>
+                                <span>${unlimited ? 'Unlimited' : remaining + ' remaining'}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${unlimited ? 0 : Math.min(100, getPercent('chat'))}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-5 flex flex-col" style="height: 500px;">
+                        <div class="flex-1 overflow-y-auto space-y-4" id="chatMessages">
+                            ${messagesHtml || '<div class="text-center text-gray-500 py-20">No messages yet. Start a conversation.</div>'}
+                        </div>
+                        <div class="flex gap-2 mt-4 pt-4 border-t border-[#222]">
+                            <input type="text" id="chatInput" placeholder="Type your message..." class="flex-1" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                            <button onclick="sendChatMessage()" class="btn-primary">Send</button>
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // KALSHI TAB
+        // ============================================================
+        function renderKalshiTab() {
+            const remaining = getRemaining('kalshi');
+            const unlimited = isUnlimited('kalshi');
+
+            const predictionsHtml = AppState.predictions.map(pred => `
+                <div class="flex justify-between items-center p-3 bg-[#0a0a0a] rounded-lg">
+                    <div>
+                        <p class="text-sm text-white">${pred.title}</p>
+                        <p class="text-xs text-gray-500">${pred.date} • ${pred.confidence}% confidence</p>
+                    </div>
+                    <div class="w-24">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${pred.confidence}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="p-6 fade-in">
+                    <h1 class="text-3xl font-bold text-white mb-2">Kalshi</h1>
+                    <p class="text-gray-500 mb-6">AI-powered prediction research</p>
+
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex-1">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Monthly predictions</span>
+                                <span>${unlimited ? 'Unlimited' : remaining + ' remaining'}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${unlimited ? 0 : Math.min(100, getPercent('kalshi'))}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2 mb-6">
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">Create Prediction</h3>
+                            <input type="text" id="predictionTitle" placeholder="Prediction question..." class="mb-3">
+                            <input type="text" id="predictionOutcome" placeholder="Outcome / market..." class="mb-3">
+                            <div class="mb-3">
+                                <label class="text-xs text-gray-400 mb-1 block">Confidence: <span id="confidenceValue">75</span>%</label>
+                                <input type="range" id="confidenceSlider" min="0" max="100" value="75" class="w-full" oninput="document.getElementById('confidenceValue').innerText = this.value">
+                            </div>
+                            <button onclick="createPrediction()" class="w-full btn-primary py-2">Create Prediction</button>
+                        </div>
+
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">Research Results</h3>
+                            <div id="researchResult" class="bg-[#0a0a0a] p-3 rounded-lg min-h-[150px] text-gray-400 text-sm">
+                                Enter a prediction and run research
+                            </div>
+                            <button onclick="runPredictionResearch()" class="w-full mt-3 btn-secondary py-2">Run AI Research</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-semibold text-white mb-4">Prediction History</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            ${predictionsHtml || '<div class="text-center text-gray-500 py-8">No predictions yet</div>'}
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // CODE TAB
+        // ============================================================
+        function renderCodeTab() {
+            const remaining = getRemaining('code');
+            const unlimited = isUnlimited('code');
+
+            const historyHtml = AppState.codeHistory.map(item => `
+                <div class="flex justify-between items-center p-3 bg-[#0a0a0a] rounded-lg">
+                    <div>
+                        <p class="text-sm text-white">${item.task}</p>
+                        <p class="text-xs text-gray-500">${item.date}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="p-6 fade-in">
+                    <h1 class="text-3xl font-bold text-white mb-2">Code Assistant</h1>
+                    <p class="text-gray-500 mb-6">AI-powered code analysis and debugging</p>
+
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex-1">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Monthly messages</span>
+                                <span>${unlimited ? 'Unlimited' : remaining + ' remaining'}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${unlimited ? 0 : Math.min(100, getPercent('code'))}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card p-5">
+                            <select id="codeLanguage" class="mb-3">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="typescript">TypeScript</option>
+                            </select>
+                            <textarea id="codeInput" rows="12" class="font-mono text-sm" placeholder="// Paste your code here"></textarea>
+                            <button onclick="runCodeAnalysis()" class="w-full mt-3 btn-primary py-2">Run Analysis</button>
+                        </div>
+
+                        <div>
+                            <div class="card p-5 mb-4">
+                                <h3 class="font-semibold text-white mb-3">Output</h3>
+                                <div id="codeOutput" class="bg-[#0a0a0a] p-3 rounded-lg min-h-[200px] font-mono text-sm text-gray-400 whitespace-pre-wrap">
+                                    // Results will appear here
+                                </div>
+                            </div>
+
+                            <div class="card p-5">
+                                <h3 class="font-semibold text-white mb-3">History</h3>
+                                <div class="space-y-2 max-h-48 overflow-y-auto">
+                                    ${historyHtml || '<div class="text-center text-gray-500 py-8">No history yet</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // ADMIN TAB
+        // ============================================================
+        function renderAdminTab() {
+            const isAdmin = AppState.currentUser.role === 'admin' || AppState.currentUser.role === 'developer';
+            if (!isAdmin) {
+                return `
+                    <div class="p-12 text-center">
+                        <div class="text-6xl mb-4">🔒</div>
+                        <h2 class="text-2xl font-bold text-white">Access Denied</h2>
+                        <p class="text-gray-400 mt-2">Admin access only</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="p-6 fade-in">
+                    <h1 class="text-3xl font-bold text-white mb-2">Admin Panel</h1>
+                    <p class="text-gray-500 mb-6">System administration and controls</p>
+
+                    <div class="grid-2 mb-6">
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">System Stats</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-gray-400">Users</span><span class="text-white">1</span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Scheduled Posts</span><span class="text-white">${AppState.scheduledPosts.length}</span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Predictions</span><span class="text-white">${AppState.predictions.length}</span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Code Analyses</span><span class="text-white">${AppState.codeHistory.length}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="card p-5">
+                            <h3 class="font-semibold text-white mb-4">Actions</h3>
+                            <button onclick="localStorage.clear(); location.reload();" class="w-full btn-secondary mb-3">Clear All Data</button>
+                            <button onclick="alert('Demo - would export CSV')" class="w-full btn-secondary">Export Data</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-semibold text-white mb-4">Environment Status</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500"></div><span>Supabase: Connected</span></div>
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500"></div><span>OpenAI: Ready</span></div>
+                            <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-500"></div><span>TikTok API: Needs approval</span></div>
+                        </div>
+                    </div>
+
+                    ${renderFooter()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // MODAL (PLANS)
+        // ============================================================
+        function showPlansModal() {
+            const modalHtml = `
+                <div id="plansModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-white">Choose Your Plan</h2>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                        </div>
+
+                        <div class="space-y-4">
+                            ${Object.values(PLANS).map(plan => `
+                                <div class="plan-card ${plan.id === AppState.currentUser.plan ? 'popular' : ''}">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h3 class="font-bold text-white">${plan.name}</h3>
+                                            ${plan.id === AppState.currentUser.plan ? '<span class="text-xs text-white">Current Plan</span>' : ''}
+                                        </div>
+                                        <span class="${plan.id === 'free' ? 'badge-free' : plan.id === 'premium' ? 'badge-premium' : 'badge-pro'}">${plan.badge}</span>
+                                    </div>
+                                    <div class="price">${plan.priceDisplay}<span> / month</span></div>
+                                    <ul class="mt-3 space-y-1 text-sm text-gray-400">
+                                        <li>AutoPost: ${plan.limits.autoPost === Infinity ? 'Unlimited' : plan.limits.autoPost}</li>
+                                        <li>AI Chat: ${plan.limits.chat === Infinity ? 'Unlimited' : plan.limits.chat}</li>
+                                        <li>Kalshi: ${plan.limits.kalshi === Infinity ? 'Unlimited' : plan.limits.kalshi}</li>
+                                        <li>Code: ${plan.limits.code === Infinity ? 'Unlimited' : plan.limits.code}</li>
+                                    </ul>
+                                    <button onclick="selectPlan('${plan.id}')" 
+                                        class="w-full mt-4 ${plan.id === AppState.currentUser.plan ? 'btn-secondary' : 'btn-primary'} py-2">
+                                        ${plan.id === AppState.currentUser.plan ? 'Current Plan' : 'Select'}
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('plansModal');
+            if (modal) modal.remove();
+        }
+
+        function selectPlan(planId) {
+            if (planId === AppState.currentUser.plan) {
+                closeModal();
+                return;
+            }
+
+            // Update plan
+            AppState.currentUser.plan = planId;
+            const plan = PLANS[planId];
+
+            // Update usage limits
+            AppState.usage.autoPost.limit = plan.limits.autoPost;
+            AppState.usage.chat.limit = plan.limits.chat;
+            AppState.usage.kalshi.limit = plan.limits.kalshi;
+            AppState.usage.code.limit = plan.limits.code;
+
+            saveState();
+            closeModal();
+            renderApp();
+            alert('Plan updated to ' + plan.name);
+        }
+
+        // ============================================================
+        // AUTOPOST FUNCTIONS
+        // ============================================================
+        function setAutopostPlatform(platform) {
+            autopostPlatform = platform;
+            renderApp();
+        }
+
+        function schedulePost() {
+            const title = document.getElementById('postTitle')?.value;
+            const time = document.getElementById('postTime')?.value;
+
+            if (!title) { alert('Enter a title'); return; }
+            if (!time) { alert('Select a time'); return; }
+            if (!useFeature('autoPost')) { alert('No credits remaining. Upgrade to continue.'); return; }
+
+            AppState.scheduledPosts.push({
+                id: Date.now(),
+                title: title,
+                platform: autopostPlatform,
+                scheduledTime: time,
+                status: 'scheduled'
+            });
+
+            saveState();
+            renderApp();
+            alert('Post scheduled!');
+        }
+
+        function cancelPost(id) {
+            AppState.scheduledPosts = AppState.scheduledPosts.filter(p => p.id !== id);
+            saveState();
+            renderApp();
+        }
+
+        // ============================================================
+        // CHAT FUNCTIONS
+        // ============================================================
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input?.value.trim();
+
+            if (!message) return;
+            if (!useFeature('chat')) { alert('No chat credits remaining. Upgrade to continue.'); return; }
+
+            AppState.chatMessages.push({
+                id: Date.now(),
+                role: 'user',
+                content: message,
+                timestamp: new Date().toISOString()
+            });
+
+            input.value = '';
+            saveState();
+            renderApp();
+
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = [
+                    'Good question! Let me help you with that.',
+                    'I understand. Here\'s what I think...',
+                    'Based on my analysis, here\'s the best approach.',
+                    'Thanks for asking! Here\'s what you should know.'
+                ];
+                AppState.chatMessages.push({
+                    id: Date.now(),
+                    role: 'assistant',
+                    content: responses[Math.floor(Math.random() * responses.length)],
+                    timestamp: new Date().toISOString()
+                });
+                saveState();
+                renderApp();
+                const chatContainer = document.getElementById('chatMessages');
+                if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 800);
+
+            const chatContainer = document.getElementById('chatMessages');
+            if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // ============================================================
+        // KALSHI FUNCTIONS
+        // ============================================================
+        function runPredictionResearch() {
+            const title = document.getElementById('predictionTitle')?.value;
+            if (!title) { alert('Enter a prediction question'); return; }
+
+            const resultDiv = document.getElementById('researchResult');
+            resultDiv.innerHTML = 'Analyzing market data...';
+            resultDiv.className = 'bg-[#0a0a0a] p-3 rounded-lg text-gray-300 text-sm';
+
+            setTimeout(() => {
+                const probability = Math.floor(Math.random() * 40) + 50;
+                resultDiv.innerHTML = `
+                    <p>Analysis complete.</p>
+                    <p class="text-white mt-2">Estimated probability: <strong>${probability}%</strong></p>
+                    <p class="text-gray-400 text-xs mt-1">Based on market data and sentiment analysis.</p>
+                    <button onclick="savePrediction('${title.replace(/'/g, "\\'")}', ${probability})" class="mt-3 btn-primary text-sm py-1 px-3">Save Prediction</button>
+                `;
+            }, 1500);
+        }
+
+        function savePrediction(title, probability) {
+            if (!useFeature('kalshi')) { alert('No prediction credits remaining. Upgrade to continue.'); return; }
+
+            AppState.predictions.unshift({
+                id: Date.now(),
+                title: title,
+                confidence: probability,
+                date: new Date().toLocaleDateString()
+            });
+
+            document.getElementById('predictionTitle').value = '';
+            document.getElementById('researchResult').innerHTML = 'Enter a prediction and run research';
+            saveState();
+            renderApp();
+            alert('Prediction saved!');
+        }
+
+        function createPrediction() {
+            const title = document.getElementById('predictionTitle')?.value;
+            const confidence = document.getElementById('confidenceSlider')?.value;
+
+            if (!title) { alert('Enter a prediction question'); return; }
+            if (!useFeature('kalshi')) { alert('No prediction credits remaining. Upgrade to continue.'); return; }
+
+            AppState.predictions.unshift({
+                id: Date.now(),
+                title: title,
+                confidence: parseInt(confidence) || 75,
+                date: new Date().toLocaleDateString()
+            });
+
+            document.getElementById('predictionTitle').value = '';
+            saveState();
+            renderApp();
+            alert('Prediction created!');
+        }
+
+        // ============================================================
+        // CODE FUNCTIONS
+        // ============================================================
+        function runCodeAnalysis() {
+            const code = document.getElementById('codeInput')?.value;
+            const language = document.getElementById('codeLanguage')?.value;
+
+            if (!code) { alert('Enter some code'); return; }
+            if (!useFeature('code')) { alert('No code credits remaining. Upgrade to continue.'); return; }
+
+            const lines = code.split('\n').length;
+            const output = `
+                ✅ Analysis Complete
+
+                Language: ${language}
+                Lines: ${lines}
+                Functions: ${code.includes('function') || code.includes('def ') ? 'Detected' : 'None'}
+                Loops: ${code.includes('for') || code.includes('while') ? 'Detected' : 'None'}
+
+                Recommendations:
+                - Add error handling
+                - Consider breaking into smaller functions
+                - Add input validation
+
+                Quality Score: ${Math.floor(Math.random() * 25) + 70}/100
+            `;
+
+            document.getElementById('codeOutput').innerHTML = output;
+
+            AppState.codeHistory.unshift({
+                id: Date.now(),
+                task: language.toUpperCase() + ' Analysis',
+                date: new Date().toLocaleDateString()
+            });
+
+            saveState();
+            renderApp();
+        }
+
+        // ============================================================
+        // RENDER APP
+        // ============================================================
+        function renderApp() {
+            if (!AppState.isAuthenticated) {
+                // Simple auth screen (for demo)
+                document.getElementById('root').innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+                        <div class="max-w-md w-full p-6">
+                            <div class="text-center mb-8">
+                                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl font-black text-black">◼</span>
+                                </div>
+                                <h1 class="text-3xl font-bold text-white">Blank Log</h1>
+                                <p class="text-gray-500 mt-2">Sign in to continue</p>
+                            </div>
+                            <div class="bg-[#111] rounded-xl p-6 border border-[#222]">
+                                <input type="email" placeholder="Email" class="mb-3" value="demo@blanklog.com">
+                                <input type="password" placeholder="Password" class="mb-4" value="password">
+                                <button onclick="login()" class="w-full btn-primary py-2">Sign In</button>
+                                <p class="text-center text-xs text-gray-500 mt-4">Demo: any email / any password</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let content = '';
+            switch (AppState.activeTab) {
+                case 'home':
+                    content = renderHomeTab();
+                    break;
+                case 'autopost':
+                    content = renderAutoPostTab();
+                    break;
+                case 'chat':
+                    content = renderChatTab();
+                    break;
+                case 'kalshi':
+                    content = renderKalshiTab();
+                    break;
+                case 'code':
+                    content = renderCodeTab();
+                    break;
+                case 'admin':
+                    content = renderAdminTab();
+                    break;
+                default:
+                    content = renderHomeTab();
+            }
+
+            document.getElementById('root').innerHTML = `
+                <div class="flex">
+                    ${renderSidebar()}
+                    <div class="main-content">
+                        ${content}
+                    </div>
+                    ${renderMobileNav()}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // LOGIN FUNCTION
+        // ============================================================
+        function login() {
+            AppState.isAuthenticated = true;
+            renderApp();
+        }
+
+        // ============================================================
+        // INITIALIZE
+        // ============================================================
+        renderApp();
+
+        // Make functions global
+        window.setActiveTab = setActiveTab;
+        window.showPlansModal = showPlansModal;
+        window.closeModal = closeModal;
+        window.selectPlan = selectPlan;
+        window.setAutopostPlatform = setAutopostPlatform;
+        window.schedulePost = schedulePost;
+        window.cancelPost = cancelPost;
+        window.sendChatMessage = sendChatMessage;
+        window.runPredictionResearch = runPredictionResearch;
+        window.savePrediction = savePrediction;
+        window.createPrediction = createPrediction;
+        window.runCodeAnalysis = runCodeAnalysis;
+        window.login = login;
+    </script>
+</body>
+</html>
